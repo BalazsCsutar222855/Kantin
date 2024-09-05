@@ -7,6 +7,7 @@ import Titles from '../components/titles';
 import CategoryList from '../components/categoryList';
 import SearchBar from '../components/searchBar';
 import RecipeList from '../components/recipeList';
+import ProfilePicture from '../components/profilePicture';
 
 export default function HomeScreen() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -56,6 +57,16 @@ export default function HomeScreen() {
     },
   ];
 
+  const CATEGORY_DATA = [
+    { id: '1', text: 'Breakfast', imageSource: { uri: 'https://example.com/image1.png' } },
+    { id: '2', text: 'Dessert', imageSource: { uri: 'https://example.com/image2.png' } },
+    { id: '3', text: 'Fast Food', imageSource: { uri: 'https://example.com/image3.png' } },
+    { id: '4', text: 'Sea Food', imageSource: { uri: 'https://example.com/image1.png' } },
+    { id: '5', text: 'Vegetarian', imageSource: { uri: 'https://example.com/image2.png' } },
+    // Add more items as needed
+  ];
+  
+
   // Filter recipes based on the search query
   const filteredRecipes = useMemo(() => {
     if (searchQuery.length > 2) {
@@ -69,30 +80,39 @@ export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView style={styles.container}>
+        <View style={styles.header}>
+            <View style={styles.textContainer}>
+              <Titles type="description" title="Hello, Balazs" />
+              <Titles type="bigTitle" title="What would you like to eat today?" />
+            </View>
+            <ProfilePicture 
+              uri="https://media.licdn.com/dms/image/v2/D5603AQFvi4-J09lBuQ/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1725547310482?e=1730937600&v=beta&t=W1BlE1eCYsXFv8YLrRbato9Immovx4-9gHLyfHOxLkk" 
+              size={50} 
+            />
+          </View>
 
           <View>
-            <Titles type="bigTitle" title="What are we eating today?" />
             <SearchBar onSearch={(query) => setSearchQuery(query)} />
-            {searchQuery.length <= 2 && (
-            <CategoryList onSelect={handleSelect} />
+              {searchQuery.length <= 2 && (
+              <CategoryList onSelect={handleSelect} CATEGORY_DATA={CATEGORY_DATA} />
             )}
           </View>
 
         {searchQuery.length <= 2 && (
           <>
             <View style={styles.section}>
-              <Titles type="sectionTitle" title="Trending" />
+              <Titles type="sectionTitle" title="Reccomended for you" />
               <RecipeList RECIPES={filteredRecipes} action={handlePress} />
             </View>
 
             <View style={styles.section}>
-              <Titles type="sectionTitle" title="Breakfast" />
-              <RecipeList RECIPES={filteredRecipes} action={handlePress} />
+              <Titles type="sectionTitle" title="Weekly trending"  onSeeAllPress/>
+              <RecipeList RECIPES={filteredRecipes} action={handlePress} size="wide"/>
             </View>
 
             <View style={styles.section}>
-              <Titles type="sectionTitle" title="Seasonal ingredients" />
-              <RecipeList RECIPES={filteredRecipes} action={handlePress} />
+              <Titles type="sectionTitle" title="Seasonal ingredients" onSeeAllPress />
+              <RecipeList RECIPES={filteredRecipes} action={handlePress} size="wide"/>
             </View>
           </>
         )}
@@ -110,14 +130,28 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    paddingTop: 30,
-    backgroundColor: 'white', // Optional: ensure the background color matches your app's theme
+    paddingTop: 40,
+    backgroundColor: '#f7f7f7', 
   },
   container: {
     flex: 1,
     padding: 16,
   },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+  },
+  textContainer: {
+    flex: 1,
+    maxWidth: '80%',
+  },
   section: {
-    marginVertical: 10,
+    marginVertical: 6,
+  },
+  noResults: {
+    alignItems: 'center',
+    marginTop: 20,
   },
 });

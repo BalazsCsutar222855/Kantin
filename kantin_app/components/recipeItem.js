@@ -1,63 +1,69 @@
 import React from 'react';
-import { View, Text, ImageBackground, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 
-export default function RecipeItem({ imageSource, title, by, minutes, ingredients, onPress }) {
+export default function RecipeItem({ imageSource, title, by, minutes, ingredients, onPress, size = 'narrow' }) { // Default value for size
+
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress}>
-      <ImageBackground source={imageSource} style={styles.image} blurRadius={3}>
-        <View style={styles.overlay}>
-          <Text style={styles.title}>{title}</Text>
-          <Text style={styles.by}>by {by}</Text>
-          <View style={styles.separator} />
-          <View style={styles.details}>
-            <Text style={styles.detailItem}>{minutes} mins</Text>
-            <Text style={styles.detailItem}>{ingredients} ingredients</Text>
+    <TouchableOpacity style={styles.container(size)} onPress={onPress}>
+      <Image source={imageSource} style={styles.image(size)} />
+      <View style={styles.detailsContainer}>
+        <Text style={styles.title}>{title}</Text>
+        <Text style={styles.by}>by {by}</Text>
+        <View style={styles.details}>
+          <View style={styles.detailItem}>
+            <MaterialIcons name="access-time" size={16} color="#666" />
+            <Text style={styles.detailText}>{minutes} mins</Text>
+          </View>
+          <View style={styles.detailItem}>
+            <MaterialIcons name="list" size={16} color="#666" />
+            <Text style={styles.detailText}>{ingredients} pcs</Text>
           </View>
         </View>
-      </ImageBackground>
+      </View>
     </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    width: 200,
-    height: 300,
-    marginHorizontal: 10,
+  container: (size) => ({
+    width: size === 'wide' ? 260 : 180,
     borderRadius: 10,
     overflow: 'hidden',
-  },
-  image: {
-    flex: 1,
-    justifyContent: 'flex-end',
-  },
-  overlay: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    padding: 15,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)', // Transparent to black gradient
+    marginHorizontal: 10,
+    marginVertical: 5,
+  }),
+  image: (size) => ({
+    width: '100%',
+    height: size === 'wide' ? 180 : 240,
+    borderRadius: 10,
+  }),
+  detailsContainer: {
+    paddingVertical: 15,
+    backgroundColor: '#f7f7f7', // Light background for the details
   },
   title: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#fff',
+    color: '#000',
   },
   by: {
     fontSize: 14,
-    color: '#fff',
-  },
-  separator: {
-    height: 2,
-    backgroundColor: '#fff',
-    marginVertical: 10,
+    color: '#666',
   },
   details: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
     marginTop: 10,
+    gap: 10
   },
   detailItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  detailText: {
     fontSize: 14,
-    color: '#fff',
+    color: '#666',
+    marginLeft: 5, // Space between icon and text
   },
 });

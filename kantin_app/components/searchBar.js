@@ -43,11 +43,20 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#f0f0f0',
+    backgroundColor: 'white',
     borderRadius: 100,
     paddingHorizontal: 12,
     paddingVertical: 10,
-    margin: 10,
+    margin: 2,
+
+    // Shadow for iOS
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    
+    // Elevation for Android
+    elevation: 1,
   },
   input: {
     flex: 1,

@@ -42,6 +42,15 @@ export default function AppNavigator() {
           ),
         }}
       />
+      <Tab.Screen
+        name="Profile"
+        component={BasketScreen} // Replace with actual component
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <MaterialIcons name="profile" size={size} color={color} />
+          ),
+        }}
+      />
     </Tab.Navigator>
   );
 }
