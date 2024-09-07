@@ -1,23 +1,37 @@
 import React from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
+import { View, ScrollView, SafeAreaView, StyleSheet } from 'react-native';
 
-export default function BasketScreen() {
+//Components
+import Titles from '../components/titles';
+
+export default function FavouritesScreen() {
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>BasketScreen</Text>
-    </View>
+
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView style={styles.container}>
+        <View style={styles.header}>
+          <Titles type="bigTitle" title="My Cart" />
+        </View> 
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    paddingTop: 40,
+    backgroundColor: '#f7f7f7', 
+  },
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     padding: 16,
   },
-  title: {
-    fontSize: 24,
+  header: {
+    gap: 10,
     marginBottom: 20,
+  },
+  section: {
+    marginVertical: 6,
   },
 });
