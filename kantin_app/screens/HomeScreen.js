@@ -94,7 +94,7 @@ export default function HomeScreen() {
             <Titles type="bigTitle" title="What would you like to eat today?" />
           </View>
           <ProfilePicture 
-            uri="https://media.licdn.com/dms/image/v2/D5603AQFvi4-J09lBuQ/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1725547310482?e=1730937600&v=beta&t=W1BlE1eCYsXFv8YLrRbato9Immovx4-9gHLyfHOxLkk" 
+            uri="https://media.licdn.com/dms/image/v2/D5603AQFpL5tn2bGP4w/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1725571032702?e=1731542400&v=beta&t=cDXqhtH_gWUBGICvqSlyzz6D35eFo9yuipowTCzxbtk" 
             size={50} 
           />
         </View>

@@ -13,7 +13,7 @@ export default function RecipeList({RECIPES, action, size}) {
           title={item.title}
           by={item.by}
           minutes={item.minutes}
-          ingredients={item.ingredients}
+          servings={item.servings}
           onPress={action}
           size={size}
         />

@@ -1,9 +1,9 @@
-// firebase.js
-import { initializeApp } from 'firebase/app';
+import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 
+// Your Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyDtQZfUwc32jioTJ6WPRN8-rGiLxzfWI5A",
   authDomain: "eten-57e5b.firebaseapp.com",
@@ -14,8 +14,10 @@ const firebaseConfig = {
   measurementId: "G-K6Y4HCEXP1"
 };
 
-const app = initializeApp(firebaseConfig);
+// Initialize Firebase only once
+app = initializeApp(firebaseConfig);
 
+// Make sure Firebase services are initialized
 const auth = getAuth(app);
 const firestore = getFirestore(app);
 const storage = getStorage(app);

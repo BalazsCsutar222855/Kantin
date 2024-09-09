@@ -21,7 +21,7 @@ export const searchRecipes = async ({
   ignorePantry = true,
   sort = 'popularity', // Default sorting option
   sortDirection = 'asc', // Default sorting direction
-  number = 20, // Number of results
+  number = 1, // Number of results
 }) => {
   try {
     const response = await axios.get(BASE_URL, {
@@ -46,8 +46,6 @@ export const searchRecipes = async ({
       },
     });
 
-    // Log the JSON response to the console
-    console.log('API Response:', response.data);
 
     return response.data;
   } catch (error) {
@@ -65,8 +63,6 @@ export const getRecipeInformation = async (id, includeNutrition = false) => {
       },
     });
 
-    // Log the JSON response to the console
-    console.log('Recipe Information Response:', response.data);
 
     return response.data;
   } catch (error) {

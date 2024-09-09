@@ -10,6 +10,9 @@ import Titles from '../components/titles';
 import IngredientItem from '../components/ingredientItem';
 import StepItem from '../components/stepItem';
 
+//Helper
+import {addRecipeToRecentlyVisited} from '../helpers/recentlyVisited';
+
 const { width } = Dimensions.get('window');
 
 export default function RecipeScreen({route}) {
@@ -32,6 +35,11 @@ export default function RecipeScreen({route}) {
 
     fetchRecipe();
   }, [id]);
+
+  useEffect(() => {
+    addRecipeToRecentlyVisited({id, image, recipe});
+  }, [id, image, recipe]);
+
 
   const scrollRef = useAnimatedRef();
   const scrollOffset = useScrollViewOffset(scrollRef);

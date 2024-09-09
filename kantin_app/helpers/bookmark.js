@@ -1,10 +1,15 @@
-import { database, ref, set, get, remove } from '../services/firebase';
+import { doc, setDoc, collection, getDocs, deleteDoc, getDoc } from 'firebase/firestore';
 
-// Add a recipe to bookmarks
-export const addRecipeToBookmarks = async (userId, recipe) => {
+import {firestore, auth} from '../services/firebase';
+// Add recipe to bookmarks
+export const addRecipeToBookmarks = async (recipeId) => {
   try {
-    const bookmarksRef = ref(database, `bookmarks/${userId}/${recipe.id}`);
-    await set(bookmarksRef, recipe);
+    const userId = auth.currentUser?.uid;
+    if (!recipeId || !userId) {
+      throw new Error('Missing required parameters');
+    }
+    const bookmarksRef = doc(firestore, 'bookmarks', userId, 'recipes', recipeId.toString());
+    await setDoc(bookmarksRef, { bookmarked: true });
     console.log('Recipe added to bookmarks');
   } catch (error) {
     console.error('Error adding recipe to bookmarks:', error);
@@ -12,15 +17,22 @@ export const addRecipeToBookmarks = async (userId, recipe) => {
 };
 
 // Get all bookmarked recipes for a user
-export const getBookmarkedRecipes = async (userId) => {
+export const getBookmarkedRecipes = async () => {
   try {
-    const bookmarksRef = ref(database, `bookmarks/${userId}`);
-    const snapshot = await get(bookmarksRef);
-    if (snapshot.exists()) {
-      return snapshot.val();
+    const userId = auth.currentUser?.uid;
+    if (!userId) {
+      throw new Error('User not authenticated');
+    }
+
+    const bookmarksRef = collection(firestore, 'bookmarks', userId, 'recipes');
+    const snapshot = await getDocs(bookmarksRef);
+
+    if (!snapshot.empty) {
+      const recipes = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      return recipes;
     } else {
       console.log('No bookmarks found');
-      return {};
+      return [];
     }
   } catch (error) {
     console.error('Error getting bookmarked recipes:', error);
@@ -28,10 +40,15 @@ export const getBookmarkedRecipes = async (userId) => {
 };
 
 // Remove a recipe from bookmarks
-export const removeRecipeFromBookmarks = async (userId, recipeId) => {
+export const removeRecipeFromBookmarks = async (recipeId) => {
   try {
-    const recipeRef = ref(database, `bookmarks/${userId}/${recipeId}`);
-    await remove(recipeRef);
+    const userId = auth.currentUser?.uid;
+    if (!recipeId || !userId) {
+      throw new Error('Missing required parameters');
+    }
+    
+    const recipeRef = doc(firestore, 'bookmarks', userId, 'recipes', recipeId.toString());
+    await deleteDoc(recipeRef);
     console.log('Recipe removed from bookmarks');
   } catch (error) {
     console.error('Error removing recipe from bookmarks:', error);
@@ -39,11 +56,17 @@ export const removeRecipeFromBookmarks = async (userId, recipeId) => {
 };
 
 // Check if a recipe is bookmarked
-export const isRecipeBookmarked = async (userId, recipeId) => {
+export const isRecipeBookmarked = async (recipeId) => {
   try {
-    const recipeRef = ref(database, `bookmarks/${userId}/${recipeId}`);
-    const snapshot = await get(recipeRef);
-    return snapshot.exists();
+    const userId = auth.currentUser?.uid;
+    if (!recipeId || !userId) {
+      throw new Error('Missing required parameters');
+    }
+
+    const recipeRef = doc(firestore, 'bookmarks', userId, 'recipes', recipeId.toString());
+    const docSnap = await getDoc(recipeRef);
+    
+    return docSnap.exists();  // Return true if bookmarked, otherwise false
   } catch (error) {
     console.error('Error checking if recipe is bookmarked:', error);
   }
