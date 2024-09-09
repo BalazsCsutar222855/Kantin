@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
 // Component for different types of titles
-const Titles = ({ type, title, description, onSeeAllPress }) => {
+const Titles = ({ type, title, description, onSeeAllPress, align = 'left' }) => {
   let titleStyle;
   let button;
 
@@ -32,14 +32,30 @@ const Titles = ({ type, title, description, onSeeAllPress }) => {
   return (
     <View style={styles.container}>
       {title && (
-        <View style={styles.titleContainer}>
-          <Text style={titleStyle}>{title}</Text>
-          {button}
+        <View style={[styles.titleContainer, { justifyContent: getAlign(align) }]}>
+          <Text style={[titleStyle, { textAlign: align }]}>{title}</Text>
+          {button && (
+            <View style={styles.buttonContainer}>
+              {button}
+            </View>
+          )}
         </View>
       )}
-      {description && <Text style={styles.description}>{description}</Text>}
+      {description && <Text style={[styles.description, { textAlign: align }]}>{description}</Text>}
     </View>
   );
+};
+
+// Helper function to get alignment for title container
+const getAlign = (align) => {
+  switch (align) {
+    case 'center':
+      return 'center';
+    case 'right':
+      return 'flex-end';
+    default:
+      return 'flex-start'; // Default alignment is left
+  }
 };
 
 // Styles for different title types
@@ -50,7 +66,6 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
   },
   bigTitle: {
@@ -78,6 +93,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#4CAF50', // Green color for the "See All" text
     fontWeight: '500',
+  },
+  buttonContainer: {
+    marginLeft: 'auto', // Push button to the right when aligned left or center
   },
 });
 

@@ -1,43 +1,36 @@
 import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import AppNavigator from './navigation/AppNavigatior';
-import WelcomeScreen from './screens/WelcomeScreen';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import LoginScreen from './screens/AuthScreen';
+import { onAuthStateChangedListener } from './helpers/auth'; 
 
 export default function App() {
-  const [hasSeenWelcome, setHasSeenWelcome] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [loading, setLoading] = useState(true); // Add a loading state for initial auth check
 
   useEffect(() => {
-    const checkIfWelcomeScreenShouldBeShown = async () => {
-      try {
-        const value = await AsyncStorage.getItem('@has_seen_welcome');
-        if (value !== null) {
-          setHasSeenWelcome(true);
-        }
-      } catch (error) {
-        console.error('Error checking AsyncStorage:', error);
+    // Subscribe to auth changes
+    const unsubscribe = onAuthStateChangedListener((user) => {
+      if (user) {
+        setLoggedIn(true);
+      } else {
+        setLoggedIn(false);
       }
-    };
+      setLoading(false); // Set loading to false after checking
+    });
 
-    checkIfWelcomeScreenShouldBeShown();
+    // Cleanup the subscription when the component unmounts
+    return unsubscribe;
   }, []);
 
-  const handleProceed = async () => {
-    try {
-      await AsyncStorage.setItem('@has_seen_welcome', 'true');
-      setHasSeenWelcome(true);
-    } catch (error) {
-      console.error('Error saving AsyncStorage:', error);
-    }
-  };
+  if (loading) {
+    // You can return a loading spinner or splash screen while checking the auth state
+    return null;
+  }
 
   return (
     <NavigationContainer>
-      {hasSeenWelcome ? (
-        <AppNavigator />
-      ) : (
-        <WelcomeScreen onProceed={handleProceed} />
-      )}
+      {loggedIn ? <AppNavigator /> : <LoginScreen />}
     </NavigationContainer>
   );
 }

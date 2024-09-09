@@ -1,23 +1,23 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 
-export default function RecipeItem({ imageSource, title, by, minutes, ingredients, onPress, size = 'narrow' }) { // Default value for size
+export default function RecipeItem({ imageSource, title, by, minutes, servings, onPress, size = 'narrow' }) { // Default value for size
 
   return (
     <TouchableOpacity style={styles.container(size)} onPress={onPress}>
-      <Image source={imageSource} style={styles.image(size)} />
+      <Image source={{uri: imageSource}} style={styles.image(size)} />
       <View style={styles.detailsContainer}>
         <Text style={styles.title}>{title}</Text>
-        <Text style={styles.by}>by {by}</Text>
+        <Text style={styles.by}>by {by || 'Unknown'}</Text>
         <View style={styles.details}>
           <View style={styles.detailItem}>
-            <MaterialIcons name="access-time" size={16} color="#666" />
-            <Text style={styles.detailText}>{minutes} mins</Text>
+            <Ionicons name="time-outline" size={16} color="#666" />
+            <Text style={styles.detailText}>{minutes || 'N/A'} mins</Text>
           </View>
           <View style={styles.detailItem}>
-            <MaterialIcons name="list" size={16} color="#666" />
-            <Text style={styles.detailText}>{ingredients} pcs</Text>
+            <Ionicons name="server-outline" size={16} color="#666" />
+            <Text style={styles.detailText}>{servings || 'N/A'} servings</Text>
           </View>
         </View>
       </View>
@@ -27,15 +27,15 @@ export default function RecipeItem({ imageSource, title, by, minutes, ingredient
 
 const styles = StyleSheet.create({
   container: (size) => ({
-    width: size === 'wide' ? 260 : 180,
+    width: size === 'grid' ? '46%' : (size === 'wide' ? 260 : 180),
     borderRadius: 10,
     overflow: 'hidden',
-    marginHorizontal: 10,
+    marginHorizontal: 5,
     marginVertical: 5,
   }),
   image: (size) => ({
     width: '100%',
-    height: size === 'wide' ? 180 : 240,
+    height: size === 'grid' ? 180 : (size === 'wide' ? 180 : 240),
     borderRadius: 10,
   }),
   detailsContainer: {

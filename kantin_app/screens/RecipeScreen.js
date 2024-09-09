@@ -1,7 +1,9 @@
-import React from 'react';
-import { View, StyleSheet, Text, Dimensions } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, Text, Dimensions, ActivityIndicator } from 'react-native';
 import Animated, { useAnimatedRef, useAnimatedStyle, useScrollViewOffset } from 'react-native-reanimated';
-import { MaterialIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
+import { getRecipeInformation } from '../services/recipeManager';
+import RenderHtml from 'react-native-render-html';
 
 // Components
 import Titles from '../components/titles';
@@ -10,7 +12,27 @@ import StepItem from '../components/stepItem';
 
 const { width } = Dimensions.get('window');
 
-export default function RecipeScreen() {
+export default function RecipeScreen({route}) {
+  const { id, image } = route.params;
+  const [recipe, setRecipe] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchRecipe = async () => {
+      try {
+        const data = await getRecipeInformation(id, true); // Pass the ID and include nutrition data
+        setRecipe(data);
+      } catch (err) {
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRecipe();
+  }, [id]);
+
   const scrollRef = useAnimatedRef();
   const scrollOffset = useScrollViewOffset(scrollRef);
 
@@ -24,78 +46,101 @@ export default function RecipeScreen() {
     };
   }, [scrollOffset]);
 
+  // Function to clean up description
+  const cleanDescription = (description) => {
+    // Remove sentences containing prices
+    const noPriceSentences = description.split('.').filter(sentence => !/\$\d+(\.\d{2})?/.test(sentence)).join('.');
+    return noPriceSentences;
+  };
+
+
   return (
     <View style={styles.container}>
       <Animated.ScrollView ref={scrollRef} contentContainerStyle={styles.scrollViewContent}>
-        <Animated.Image
-          source={{ uri: 'https://media.istockphoto.com/id/641845826/nl/foto/engels-ontbijt.jpg?s=2048x2048&w=is&k=20&c=GZK6AkhwLyLHI6za4ksf4lrx995yE4ZxcsANoOo5SuA=' }}
-          style={[styles.image, imageAnimatedStyle]}
-        />
-        <View style={styles.content}>
-          <View style={styles.bar}></View>
-          <View style={styles.header}>
-            <Titles type="bigTitle" title="Recipe 1" />
-            <Titles type="description" title="By Balazs" />
-            <View style={styles.details}>
-              <View style={styles.detailItem}>
-                <MaterialIcons name="access-time" size={16} color="#666" />
-                <Text style={styles.detailText}>10 mins</Text>
-              </View>
-              <View style={styles.detailItem}>
-                <MaterialIcons name="list" size={16} color="#666" />
-                <Text style={styles.detailText}>6 pcs</Text>
-              </View>
-              <View style={styles.detailItem}>
-                <MaterialIcons name="fastfood" size={16} color="#666" />
-                <Text style={styles.detailText}>450 kcal</Text>
+        {
+          loading ? (
+            <View style={styles.container}>
+              <ActivityIndicator size="large" color="#0000ff" />
+            </View>
+          ) : error ? (
+            <View style={styles.container}>
+              <Text style={styles.errorText}>Something went wrong!</Text>
+            </View>
+          ) : (
+            <View style={styles.container}>
+              <Animated.Image
+                source={{ uri: image ? image : 'https://via.placeholder.com/300' }}
+                style={[styles.image, imageAnimatedStyle]}
+              />
+              <View style={styles.content}>
+                <View style={styles.bar}></View>
+                <View style={styles.header}>
+                  <Titles type="bigTitle" title={recipe.title} />
+                  <Titles type="description" title={`By ${recipe.sourceName || 'Unknown'}`} />
+                  <View style={styles.details}>
+                    <View style={styles.detailItem}>
+                      <Ionicons name="time-outline" size={16} color="#666" />
+                      <Text style={styles.detailText}>{recipe.readyInMinutes} mins</Text>
+                    </View>
+                    <View style={styles.detailItem}>
+                      <Ionicons name="server-outline" size={16} color="#666" />
+                      <Text style={styles.detailText}>{recipe.servings} servings</Text>
+                    </View>
+                    <View style={styles.detailItem}>
+                      <Ionicons name="scale-outline" size={16} color="#666" />
+                      <Text style={styles.detailText}>{recipe.nutrition?.nutrients?.find(n => n.name === 'Calories')?.amount || 'N/A'} kcal</Text>
+                    </View>
+                  </View>
+                </View>
+
+                <View style={styles.section}>
+                  <Titles type="sectionTitle" title="Description" />
+                  <RenderHtml
+                    contentWidth={width}
+                    source={{ html: cleanDescription(recipe.summary) || 'No description available' }}
+                  />
+                </View>
+
+                <View style={styles.section}>
+                  <Titles type="sectionTitle" title="Ingredients" />
+                  {recipe.extendedIngredients?.map((ingredient) => (
+                    <IngredientItem
+                      key={ingredient.id}
+                      imageSource={{ uri: ingredient.image ? `https://spoonacular.com/cdn/ingredients_100x100/${ingredient.image}` : 'https://via.placeholder.com/50' }}
+                      name={ingredient.name}
+                      volume={ingredient.amount + ' ' + ingredient.unit}
+                      storeLogo={{ uri: 'https://via.placeholder.com/30' }}
+                    />
+                  ))}
+                </View>
+
+                <View style={styles.section}>
+                  <Titles type="sectionTitle" title="Steps" />
+                  {recipe.analyzedInstructions[0]?.steps.map((step) => (
+                    <StepItem
+                      key={step.number}
+                      stepNumber={step.number.toString()}
+                      title={step.step}
+                      imageSource={{ uri: 'https://via.placeholder.com/100' }} // Placeholder image URL
+                    />
+                  ))}
+                </View>
+
+                <View style={styles.section}>
+                  <Titles type="sectionTitle" title="Nutrition" />
+                  {recipe.nutrition?.nutrients?.map((nutrient) => (
+                    <View key={nutrient.name} style={styles.nutritionItem}>
+                      <Text style={styles.nutritionText}>
+                        {nutrient.name}: {nutrient.amount} {nutrient.unit}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+
               </View>
             </View>
-          </View>
-
-          <View style={styles.section}>
-            <Titles type="sectionTitle" title="Description" />
-            <Titles type="description" title="A brief description of the recipe goes here. This could include details about the flavor, ingredients, and what makes it special." />
-          </View>
-
-          <View style={styles.section}>
-            <Titles type="sectionTitle" title="Ingredients" />
-            <IngredientItem
-              imageSource={{ uri: 'https://via.placeholder.com/50' }}
-              name="Tomatoes"
-              volume="2 pcs"
-              storeLogo={{ uri: 'https://via.placeholder.com/30' }}
-            />
-            <IngredientItem
-              imageSource={{ uri: 'https://via.placeholder.com/50' }}
-              name="Onions"
-              volume="1 large"
-              storeLogo={{ uri: 'https://via.placeholder.com/30' }}
-            />
-          </View>
-
-          <View style={styles.section}>
-            <Titles type="sectionTitle" title="Steps" />
-            <StepItem
-              stepNumber="1"
-              title="Prepare the Ingredients"
-              description="Wash and chop all the vegetables and herbs. Gather all the necessary ingredients and set them aside for easy access during cooking."
-              imageSource={{ uri: 'https://example.com/ingredient-prep.jpg' }} // Placeholder image URL
-            />
-            <StepItem
-              stepNumber="2"
-              title="Cook the Ingredients"
-              description="Heat oil in a pan and sauté the onions until golden brown. Add the chopped vegetables and cook until tender. Stir in spices and herbs to enhance the flavor."
-              imageSource={{ uri: 'https://example.com/cooking-process.jpg' }} // Placeholder image URL
-            />
-            <StepItem
-              stepNumber="3"
-              title="Serve and Enjoy"
-              description="Transfer the cooked ingredients to a serving dish. Garnish with fresh herbs and serve hot. Enjoy your meal with a side of rice or bread."
-              imageSource={{ uri: 'https://example.com/serving.jpg' }} // Placeholder image URL
-            />
-          </View>
-
-        </View>
+          )
+        }
       </Animated.ScrollView>
     </View>
   );
@@ -121,19 +166,19 @@ const styles = StyleSheet.create({
     top: -20,
   },
   bar: {
-    width: 100,
+    width: 40,
     height: 5,
     backgroundColor: 'lightgray',
     borderRadius: 20,
-    marginTop: 5,
+    marginTop: 0,
     marginBottom: 30,
     alignSelf: 'center',
   },
   header: {
     paddingBottom: 25,
     marginBottom: 25,
-    borderBottomWidth:1,
-    borderColor: 'lightgray'
+    borderBottomWidth: 1,
+    borderColor: 'lightgray',
   },
   section: {
     marginVertical: 20,
@@ -152,5 +197,18 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666',
     marginLeft: 5, // Space between icon and text
+  },
+  nutritionItem: {
+    marginVertical: 5,
+  },
+  nutritionText: {
+    fontSize: 14,
+    color: '#444',
+  },
+  errorText: {
+    fontSize: 16,
+    color: 'red',
+    textAlign: 'center',
+    marginTop: 20,
   },
 });

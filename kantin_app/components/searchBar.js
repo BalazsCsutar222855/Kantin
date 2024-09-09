@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { View, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 
-export default function SearchBar({ onSearch }) {
+export default function SearchBar({ onSearch, onOpenFilter }) {
   const [searchText, setSearchText] = useState('');
 
   const handleChange = (text) => {
@@ -17,7 +17,7 @@ export default function SearchBar({ onSearch }) {
 
   return (
     <View style={styles.container}>
-      <MaterialIcons name="search" size={24} color="gray" />
+      <Ionicons name="search" size={20} color="gray" />
       
       <TextInput
         style={styles.input}
@@ -28,13 +28,15 @@ export default function SearchBar({ onSearch }) {
 
       {searchText.length > 0 && (
         <TouchableOpacity onPress={clearInput}>
-          <MaterialIcons name="close" size={24} color="gray" style={styles.clearIcon} />
+          <Ionicons name="close" size={20} color="gray" style={styles.clearIcon} />
         </TouchableOpacity>
       )}
       
       <View style={styles.verticalLine} />
 
-      <MaterialIcons name="filter-list" size={24} color="gray" />
+      <TouchableOpacity onPress={onOpenFilter}>
+        <Ionicons name="filter-outline" size={20} color="gray" />
+      </TouchableOpacity>
     </View>
   );
 }
@@ -44,7 +46,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: 'white',
-    borderRadius: 100,
+    borderRadius: 10,
     paddingHorizontal: 12,
     paddingVertical: 10,
     margin: 2,

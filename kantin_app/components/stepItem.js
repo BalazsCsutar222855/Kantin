@@ -8,10 +8,7 @@ const StepItem = ({ stepNumber, description, title }) => {
     <View style={styles.container}>
       <View style={styles.stepNumberContainer}>
         <Text style={styles.stepNumber}>{stepNumber}</Text>
-        <Titles type="bigTitle" title={title}/>
-      </View>
-      <View style={styles.details}>
-        <Titles type="description" title={description}/>
+        <Titles type="description" title={title}/>
       </View>
     </View>
   );
@@ -25,7 +22,6 @@ const styles = StyleSheet.create({
   stepNumberContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    width: '70%'
   },
   stepNumber: {
     fontSize: 50,

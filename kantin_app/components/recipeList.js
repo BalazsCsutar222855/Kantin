@@ -20,8 +20,6 @@ export default function RecipeList({RECIPES, action, size}) {
       )}
       keyExtractor={(item) => item.id}
       horizontal
-      snapToAlignment="center"
-      snapToInterval={200 + 20} // ITEM_WIDTH + margin
       decelerationRate="fast"
       contentContainerStyle={styles.list}
       showsHorizontalScrollIndicator={false}
