@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { View, ScrollView, SafeAreaView, StyleSheet, ActivityIndicator, Text, FlatList, RefreshControl } from 'react-native';
+import { useRoute, useNavigation } from '@react-navigation/native';
 
 // Components
 import Titles from '../components/titles';
@@ -19,6 +20,12 @@ export default function FavouritesScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
+  const navigation = useNavigation()
+
+  const handlePress = (id, image) => {
+    navigation.navigate('Recipe', { id, image }); // Navigate to RecipeScreen and pass the id
+  };
+
   // Function to fetch all data
   const fetchData = async () => {
     try {
@@ -27,12 +34,8 @@ export default function FavouritesScreen() {
       setRecentlyVisited(recentlyVisited);
 
       const bookmarkedRecipes = await getBookmarkedRecipes();
-      const recipesWithDetails = await Promise.all(
-        bookmarkedRecipes.map(async (recipe) => {
-          const recipeInfo = await getRecipeInformation(recipe.id);
-          return { ...recipe, ...recipeInfo };
-        })
-      );
+      setBookmarkedRecipes(bookmarkedRecipes)
+
       setBookmarkedRecipes(recipesWithDetails);
       console.log('Bookmarked recipes:', recipesWithDetails);
     } catch (error) {
@@ -76,7 +79,7 @@ export default function FavouritesScreen() {
         </View> 
         <View style={styles.section}>
           <Titles type="sectionTitle" title="Recently visited" />
-          <RecipeList RECIPES={recentlyVisited} action={(item) => console.log('clicked', item)} />
+          <RecipeList RECIPES={recentlyVisited} action={(recipe) => handlePress(recipe.id, recipe.imageSource)} size="wide"/>
         </View>
         <View style={styles.section}>
           <Titles type="sectionTitle" title="All" />
@@ -86,12 +89,12 @@ export default function FavouritesScreen() {
             numColumns={2}
             renderItem={({ item }) => (
               <RecipeItem
-                imageSource={item.image}
+                imageSource={item.imageSource}
                 title={item.title}
-                by={item.sourceName}
-                minutes={item.readyInMinutes}
+                by={item.by}
+                minutes={item.minutes}
                 servings={item.servings}
-                onPress={() => handlePress(item.id, item.image)}
+                onPress={() => handlePress(item.id, item.imageSource)}
                 size="grid"
               />
             )}

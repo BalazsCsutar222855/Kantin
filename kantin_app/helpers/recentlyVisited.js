@@ -37,7 +37,6 @@ export const addRecipeToRecentlyVisited = async (recipe) => {
         }
 };
 
-
 // Get the list of recently visited recipes
 export const getRecentlyVisited = async () => {
   try {
@@ -48,3 +47,13 @@ export const getRecentlyVisited = async () => {
     return [];
   }
 };
+
+export const getRecentlyVisitedById = async (id) => {
+  try {
+    const recentlyVisited = await AsyncStorage.getItem(RECENTLY_VISITED_KEY); // Use the same key
+    const recipes = recentlyVisited ? JSON.parse(recentlyVisited) : [];
+    return recipes.find(recipe => recipe.id === id);
+  } catch (error) {
+    console.error('Error retrieving recipe from recently visited:', error);
+  }
+}

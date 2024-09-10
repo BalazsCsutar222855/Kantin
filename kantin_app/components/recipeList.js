@@ -1,9 +1,8 @@
 import React from 'react';
-import { View, FlatList, StyleSheet } from 'react-native';
+import { FlatList, StyleSheet } from 'react-native';
 import RecipeItem from './recipeItem'; // Adjust the path based on your folder structure
 
-
-export default function RecipeList({RECIPES, action, size}) {
+export default function RecipeList({ RECIPES, action, size }) {
   return (
     <FlatList
       data={RECIPES}
@@ -14,11 +13,11 @@ export default function RecipeList({RECIPES, action, size}) {
           by={item.by}
           minutes={item.minutes}
           servings={item.servings}
-          onPress={action}
+          onPress={() => action(item)}
           size={size}
         />
       )}
-      keyExtractor={(item) => item.id}
+      keyExtractor={(item) => item.id.toString()} // Ensure key is a string
       horizontal
       decelerationRate="fast"
       contentContainerStyle={styles.list}

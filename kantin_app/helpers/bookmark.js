@@ -2,17 +2,45 @@ import { doc, setDoc, collection, getDocs, deleteDoc, getDoc } from 'firebase/fi
 
 import {firestore, auth} from '../services/firebase';
 // Add recipe to bookmarks
-export const addRecipeToBookmarks = async (recipeId) => {
+export const addRecipeToBookmarks = async (recipe) => {
+  try {
+    const userId = auth.currentUser?.uid;
+    if (!recipe || !userId) {
+      throw new Error('Missing required parameters');
+    }
+
+    const recipeData = {
+      id: recipe.id,
+      title: recipe.title,
+      imageSource: recipe.imageSource,
+      by: recipe.by,
+      minutes: recipe.minutes,
+      servings: recipe.servings,
+      bookmarked: true
+    };
+
+    const bookmarksRef = doc(firestore, 'bookmarks', userId, 'recipes', recipe.id.toString());
+    await setDoc(bookmarksRef, recipeData); // Save the entire recipe data
+
+    console.log('Recipe added to bookmarks:', recipeData);
+  } catch (error) {
+    console.error('Error adding recipe to bookmarks:', error);
+  }
+};
+
+// Remove a recipe from bookmarks
+export const removeRecipeFromBookmarks = async (recipeId) => {
   try {
     const userId = auth.currentUser?.uid;
     if (!recipeId || !userId) {
       throw new Error('Missing required parameters');
     }
-    const bookmarksRef = doc(firestore, 'bookmarks', userId, 'recipes', recipeId.toString());
-    await setDoc(bookmarksRef, { bookmarked: true });
-    console.log('Recipe added to bookmarks');
+    
+    const recipeRef = doc(firestore, 'bookmarks', userId, 'recipes', recipeId.toString());
+    await deleteDoc(recipeRef);
+    console.log('Recipe removed from bookmarks');
   } catch (error) {
-    console.error('Error adding recipe to bookmarks:', error);
+    console.error('Error removing recipe from bookmarks:', error);
   }
 };
 
@@ -36,22 +64,6 @@ export const getBookmarkedRecipes = async () => {
     }
   } catch (error) {
     console.error('Error getting bookmarked recipes:', error);
-  }
-};
-
-// Remove a recipe from bookmarks
-export const removeRecipeFromBookmarks = async (recipeId) => {
-  try {
-    const userId = auth.currentUser?.uid;
-    if (!recipeId || !userId) {
-      throw new Error('Missing required parameters');
-    }
-    
-    const recipeRef = doc(firestore, 'bookmarks', userId, 'recipes', recipeId.toString());
-    await deleteDoc(recipeRef);
-    console.log('Recipe removed from bookmarks');
-  } catch (error) {
-    console.error('Error removing recipe from bookmarks:', error);
   }
 };
 

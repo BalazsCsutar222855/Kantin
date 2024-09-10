@@ -5,10 +5,12 @@ import RecipeScreen from '../screens/RecipeScreen';
 import SearchResultScreen from '../screens/SearchResultsScreen'; // Import SearchResultsScreen
 import { TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; // Import Material Icons for the back and bookmark button
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 //helper
 
 import {addRecipeToBookmarks, removeRecipeFromBookmarks, isRecipeBookmarked} from '../helpers/bookmark';
+import {getRecentlyVisitedById} from '../helpers/recentlyVisited'
 
 const Stack = createStackNavigator();
 
@@ -61,23 +63,29 @@ export default function StackNavigator() {
             }, [id]);
 
             return (
-              <TouchableOpacity
-                onPress={async () => {
-                  if (isBookmarked) {
-                    await removeRecipeFromBookmarks(id);
+            <TouchableOpacity
+              onPress={async () => {
+                if (isBookmarked) {
+                  await removeRecipeFromBookmarks(id);
+                } else {
+                  const recipe = await getRecentlyVisitedById(id); // Await the result of getRecentlyVisitedById
+                  if (recipe) {
+                    await addRecipeToBookmarks(recipe); // Pass the recipe to the bookmarks function
                   } else {
-                    await addRecipeToBookmarks(id);
+                    console.log('Recipe not found in recently visited');
                   }
-                  setIsBookmarked(!isBookmarked); // Toggle state after updating
-                }}
-                style={styles.headerButton}
-              >
-                <Ionicons
-                  name={isBookmarked ? "bookmark" : "bookmark-outline"}
-                  size={20}
-                  color="black"
-                />
-              </TouchableOpacity>
+                }
+                setIsBookmarked(!isBookmarked); // Toggle state after updating
+              }}
+              style={styles.headerButton}
+            >
+              <Ionicons
+                name={isBookmarked ? "bookmark" : "bookmark-outline"}
+                size={20}
+                color="black"
+              />
+            </TouchableOpacity>
+
             );
           },
         })}

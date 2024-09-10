@@ -31,8 +31,8 @@ export default function HomeScreen() {
     console.log('Selected category ID:', id);
   };
 
-  const handlePress = (id) => {
-    navigation.navigate('Recipe', { recipeId: id });
+  const handlePress = (id, image) => {
+    navigation.navigate('Recipe', { id, image }); // Navigate to RecipeScreen and pass the id
   };
 
   const handleSearchPress = () => {
@@ -114,17 +114,17 @@ export default function HomeScreen() {
 
         <View style={styles.section}>
           <Titles type="sectionTitle" title="Recommended for you" />
-          <RecipeList RECIPES={RECIPES} action={handlePress} />
+          <RecipeList RECIPES={RECIPES} action={(recipe) => handlePress(recipe.id, recipe.imageSource)} />
         </View>
 
         <View style={styles.section}>
           <Titles type="sectionTitle" title="Weekly trending" onSeeAllPress />
-          <RecipeList RECIPES={RECIPES} action={handlePress} size="wide" />
+          <RecipeList RECIPES={RECIPES} action={(recipe) => handlePress(recipe.id, recipe.imageSource)} size="wide" />
         </View>
 
         <View style={styles.section}>
           <Titles type="sectionTitle" title="Seasonal ingredients" onSeeAllPress />
-          <RecipeList RECIPES={RECIPES} action={handlePress} size="wide" />
+          <RecipeList RECIPES={RECIPES} action={(recipe) => handlePress(recipe.id, recipe.imageSource)} size="wide" />
         </View>
       </ScrollView>
       <FilterSheet
