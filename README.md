@@ -2,7 +2,7 @@
 
 A React Native app that simplifies your grocery shopping experience by parsing supermarket items and prices from a JSON file and displaying the best deals for each recipe ingredient. Users can also add the items to their in-app basket for easy tracking.
 
-![App Preview](![image](https://github.com/user-attachments/assets/655ec705-d39f-4eb0-83b9-49b4bedc370c))
+![App Preview]![image](https://github.com/user-attachments/assets/655ec705-d39f-4eb0-83b9-49b4bedc370c)
 
 ## 🚀 Features
 
