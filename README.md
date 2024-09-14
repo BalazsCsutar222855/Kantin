@@ -42,10 +42,12 @@ A React Native app that simplifies your grocery shopping experience by parsing s
 
 ## 🖼️ Screenshots
 
-- Recipe Page  
+- Recipe Page
+   
   ![image](https://github.com/user-attachments/assets/18abec07-3fd3-42e8-9136-6827f599a320)
 
 - Bookmarks, history
+  
   ![image](https://github.com/user-attachments/assets/ccffd20e-9848-4b6f-ae82-6d9c7aad82a3)
 
 
