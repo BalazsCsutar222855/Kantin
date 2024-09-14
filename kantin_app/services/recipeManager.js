@@ -21,7 +21,7 @@ export const searchRecipes = async ({
   ignorePantry = true,
   sort = 'popularity', // Default sorting option
   sortDirection = 'asc', // Default sorting direction
-  number = 1, // Number of results
+  number = 20, // Number of results
 }) => {
   try {
     const response = await axios.get(BASE_URL, {

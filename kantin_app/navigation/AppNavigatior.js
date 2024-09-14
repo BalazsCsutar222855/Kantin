@@ -3,7 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import HomeScreen from '../screens/HomeScreen';
 import FavouritesScreen from '../screens/BookmarkScreen';
-import BasketScreen from '../screens/BasketScreen';
+import CartScreen from '../screens/CartScreen';
 import StackNavigator from './StackNavigator'; // Import StackNavigator
 import ProfileScreen from '../screens/ProfileScreen'; // Import ProfileScreen
 
@@ -35,7 +35,7 @@ export default function AppNavigator() {
             iconName = focused ? 'bookmark' : 'bookmark-outline';
           } else if (route.name === 'Add') {
             iconName = focused ? 'add-circle-outline' : 'add-circle-outline';
-          } else if (route.name === 'Basket') {
+          } else if (route.name === 'Cart') {
             iconName = focused ? 'bag' : 'bag-outline';
           } else if (route.name === 'Profile') {
             iconName = focused ? 'person-circle' : 'person-circle-outline';
@@ -58,8 +58,8 @@ export default function AppNavigator() {
         component={FavouritesScreen}
       />
       <Tab.Screen
-        name="Basket"
-        component={BasketScreen}
+        name="Cart"
+        component={CartScreen}
       />
       <Tab.Screen
         name="Profile"

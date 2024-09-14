@@ -77,11 +77,11 @@ export default function HomeScreen() {
   ];
 
   const CATEGORY_DATA = [
-    { id: '1', text: 'Breakfast', imageSource: { uri: 'https://example.com/image1.png' } },
-    { id: '2', text: 'Dessert', imageSource: { uri: 'https://example.com/image2.png' } },
-    { id: '3', text: 'Fast Food', imageSource: { uri: 'https://example.com/image3.png' } },
-    { id: '4', text: 'Sea Food', imageSource: { uri: 'https://example.com/image1.png' } },
-    { id: '5', text: 'Vegetarian', imageSource: { uri: 'https://example.com/image2.png' } },
+    { id: '1', text: 'Breakfast'},
+    { id: '2', text: 'Dessert'},
+    { id: '3', text: 'Fast Food'},
+    { id: '4', text: 'Sea Food'},
+    { id: '5', text: 'Vegetarian'},
     // Add more items as needed
   ];
 
